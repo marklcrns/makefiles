@@ -1,0 +1,43 @@
+# Compiles all files in the same directory
+# Note: Does not detects header file ".h" changes as it only checks for new
+# 			changes in cpp files
+
+CC := clang++
+CFLAGS := -g3 -std=c++14 -Wall -Wextra -pedantic
+
+SDIR := .
+ODIR := build
+TARGET := main
+
+SRCEXT := cpp
+SOURCES := $(shell find . -type f -name "*.$(SRCEXT)")
+OBJECTS := $(patsubst $(SDIR)/%,$(ODIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+INC := -I../include
+
+$(TARGET): $(OBJECTS)
+	@echo "  Linking..."
+	@echo "  $(CC) $(CFLAGS) $^ -o $(TARGET)"; $(CC) $(CFLAGS) $^ -o $(TARGET) && \
+		echo -e "\nBuild success!"
+
+$(ODIR)/%.o: $(SDIR)/%.$(SRCEXT)
+	@mkdir -p $(ODIR)
+	@echo "  $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+clean:
+	@echo "  Cleaning..."
+	@echo "  $(RM) -r $(ODIR) $(TARGET)"; $(RM) -r $(ODIR) $(TARGET)
+
+rebuild:
+	make clean
+	make $(TARGET)
+
+default:
+	make $(TARGET)
+
+memtest: $(TARGET)
+	valgrind --track-origins=yes --tool=memcheck --leak-check=full ./$(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: clean test run new default
