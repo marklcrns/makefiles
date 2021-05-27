@@ -97,7 +97,7 @@ else
 	$(RM) $(BIN_DIR)/$(BINS)
 endif
 
-clean-all:
+cleanest:
 	@echo "  Cleaning all files..."
 ifeq ($(PRG_SUFFIX_FLAG),0)
 	$(RM) $(BIN_DIR)/$(PRGS)
