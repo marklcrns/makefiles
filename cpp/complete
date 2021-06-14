@@ -71,6 +71,7 @@ CFLAGS 				?= -std=c++11 -Wpedantic -Wall -Wextra -Warray-bounds \
 								 -Weffc++ -Wconversion -Wsign-conversion \
 								 -g3 -ggdb3 \
 								 -Werror
+LDFLAGS       ?=
 
 SRC_DIR				:= src
 BUILD_DIR			:= build
