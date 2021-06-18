@@ -10,8 +10,8 @@
 # Ideal project structure:
 #
 # root/
-# 	|-Makefile  (this)
-# 	|-include   (optional)
+# 	|-Makefile (this)
+# 	|-include  (optional)
 # 	|-src/
 # 		|-main.cpp
 # 		|-submodule/
@@ -68,26 +68,26 @@ LD := $(CC)
 # -Wsign-conversion  Warn for implicit conversions that may change the sign of
 #                    an integer value
 # -Werror            Treat all warnings as errors
-CFLAGS 				?= -std=c++11 \
-								 -g3 -ggdb3 \
-								 -Wpedantic -Wall -Wextra -Warray-bounds \
-								 -Weffc++ -Wconversion -Wsign-conversion \
-								 # -Werror
-LDFLAGS				?=
+CFLAGS 		?= -std=c++14 \
+		-g3 -ggdb3 \
+		-Wpedantic -Wall -Wextra -Warray-bounds \
+		-Weffc++ -Wconversion -Wsign-conversion \
+		# -Werror
+LDFLAGS		?=
 
-SRC_DIR				:= src
-BUILD_DIR			:= build
-TEST_DIR			:= test
-PROF_DIR			:= prof
-BIN_DIR				:= bin
+SRC_DIR		:= src
+BUILD_DIR	:= build
+TEST_DIR	:= test
+PROF_DIR	:= prof
+BIN_DIR		:= bin
 
-INCLUDE					  := include
-TARGET 						:= main
-TARGET_EXT				:=
-RUN_TARGET_ARGS		:=
+INCLUDE		:= include
+TARGET 		:= sieve_of_eratosthenes
+TARGET_EXT	:=
+RUN_TARGET_ARGS	:=
 
 # '.' indicates the src or test directory itself
-MODULES   		:= . calc io logger utils
+MODULES   	:= . calc io logger utils
 TEST_MODULES 	:= .
 
 # Use mingw-w64 64-bit or 32-bit compiler
@@ -95,35 +95,35 @@ MINGW_W64	:= 0
 MINGW_W32	:= 0
 
 # Other tools
-GCOV						?= gcov
-LCOV						?= lcov
-GPROF						?= gprof
-VALGRIND 				?= valgrind
-GCOV_FLAGS			?= --relative-only
-LCOV_FLAGS			?= --capture
-GPROF_FLAGS			?=
+GCOV		?= gcov
+LCOV		?= lcov
+GPROF		?= gprof
+VALGRIND 	?= valgrind
+GCOV_FLAGS	?= --relative-only
+LCOV_FLAGS	?= --capture
+GPROF_FLAGS	?=
 VALGRIND_FLAGS	?= --track-origins=yes --tool=memcheck \
-									 --leak-check=full --show-leak-kinds=all
+		--leak-check=full --show-leak-kinds=all
 
 # Enable profiling tools necessary flags
-E_GCOV	:= 0
-E_GPROF	:= 0
+E_GCOV		:= 0
+E_GPROF		:= 0
 
 #==============================================================================#
 ################## DOES NOT NEED CHANGING BELOW THIS LINE ######################
 #==============================================================================#
 
-ifeq ($(MINGW_W32), 1)
-CC 					:= i686-w64-mingw32-g++
-LD 					:= $(CC)
-LDFLAGS			+= -static-libgcc -static-libstdc++
+ifeq ($(MINGW_W64), 1)
+CC 		:= x86_64-w64-mingw32-g++
+LD 		:= $(CC)
+LDFLAGS		+= -static-libgcc -static-libstdc++
 TARGET_EXT	:= .exe
 endif
 
-ifeq ($(MINGW_W64), 1)
-CC 					:= x86_64-w64-mingw32-g++
-LD 					:= $(CC)
-LDFLAGS			+= -static-libgcc -static-libstdc++
+ifeq ($(MINGW_W32), 1)
+CC 		:= i686-w64-mingw32-g++
+LD 		:= $(CC)
+LDFLAGS		+= -static-libgcc -static-libstdc++
 TARGET_EXT	:= .exe
 endif
 
@@ -137,23 +137,23 @@ CFLAGS		+= -pg
 LDFLAGS		+= -pg
 endif
 
-CXX 						:= $(CC)
-CXXFLAGS 				:= $(CFLAGS)
+CXX 		:= $(CC)
+CXXFLAGS 	:= $(CFLAGS)
 
-SRC_MODULES   	:= $(addprefix 	$(SRC_DIR)/,$(MODULES))
-SRC_BUILD_DIR 	:= $(addprefix 	$(BUILD_DIR)/$(SRC_DIR)/,$(MODULES))
-SRC       			:= $(foreach 		sdir,$(SRC_MODULES),$(wildcard $(sdir)/*.cpp))
-OBJ       			:= $(patsubst 	$(SRC_DIR)/%.cpp,$(BUILD_DIR)/$(SRC_DIR)/%.o,$(SRC))
+SRC_MODULES   	:= $(addprefix $(SRC_DIR)/,$(MODULES))
+SRC_BUILD_DIR 	:= $(addprefix $(BUILD_DIR)/$(SRC_DIR)/,$(MODULES))
+SRC       	:= $(foreach sdir,$(SRC_MODULES),$(wildcard $(sdir)/*.cpp))
+OBJ       	:= $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/$(SRC_DIR)/%.o,$(SRC))
 
 TEST_SRC_DIR		:= $(addprefix 	$(TEST_DIR)/,$(TEST_MODULES))
-TEST_BUILD_DIR 	:= $(addprefix 	$(BUILD_DIR)/$(TEST_DIR)/,$(TEST_MODULES))
-TEST_SRC 				:= $(foreach 		tdir,$(TEST_SRC_DIR),$(wildcard $(tdir)/*.cpp))
-TEST_OBJ  			:= $(patsubst 	$(TEST_DIR)/%.cpp,$(BUILD_DIR)/$(TEST_DIR)/%.o,$(TEST_SRC))
-TEST_TARGETS		:= $(patsubst 	$(TEST_DIR)/%.cpp,$(BIN_DIR)/%$(TARGET_EXT),$(TEST_SRC))
+TEST_BUILD_DIR 	:= $(addprefix $(BUILD_DIR)/$(TEST_DIR)/,$(TEST_MODULES))
+TEST_SRC 	:= $(foreach tdir,$(TEST_SRC_DIR),$(wildcard $(tdir)/*.cpp))
+TEST_OBJ  	:= $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/$(TEST_DIR)/%.o,$(TEST_SRC))
+TEST_TARGETS	:= $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%$(TARGET_EXT),$(TEST_SRC))
 # Objects with target excluded (workaround for multiple 'main' definition error)
 OBJ_TARGET_EXCL	:= $(filter-out $(BUILD_DIR)/$(SRC_DIR)/./$(TARGET).o,$(OBJ))
 
-INC  						:= $(addprefix 	-I,$(SRC_MODULES)) $(addprefix -I,$(INCLUDE))
+INC		:= $(addprefix -I,$(SRC_MODULES)) $(addprefix -I,$(INCLUDE))
 
 vpath %.cpp $(SRC_MODULES) $(TEST_SRC_DIR)
 
