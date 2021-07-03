@@ -4,7 +4,7 @@
 #
 # Support for profiling tools: valgrind, gprof, gcov, lcov
 #
-# Author:	Mark Lucernas
+# Author:	Mark Lucernas <https://github.com/marklcrns>
 # Date:		2021-04-11
 ################################################################################
 # Ideal project structure:
@@ -68,7 +68,7 @@ LD := $(CC)
 # -Wsign-conversion  Warn for implicit conversions that may change the sign of
 #                    an integer value
 # -Werror            Treat all warnings as errors
-CFLAGS 		?= -std=c++14 \
+CFLAGS		?= -std=c++14 \
 		-g3 -ggdb3 \
 		-Wpedantic -Wall -Wextra -Warray-bounds \
 		-Weffc++ -Wconversion -Wsign-conversion \
@@ -82,13 +82,13 @@ PROF_DIR	:= prof
 BIN_DIR		:= bin
 
 INCLUDE		:= include
-TARGET 		:= sieve_of_eratosthenes
+TARGET		:= sieve_of_eratosthenes
 TARGET_EXT	:=
 RUN_TARGET_ARGS	:=
 
-# '.' indicates the src or test directory itself
-MODULES   	:= . calc io logger utils
-TEST_MODULES 	:= .
+# '.' indicates the src/test directory itself
+MODULES		:= . bigint
+TEST_MODULES	:= .
 
 # Use mingw-w64 64-bit or 32-bit compiler
 MINGW_W64	:= 0
@@ -137,18 +137,18 @@ CFLAGS		+= -pg
 LDFLAGS		+= -pg
 endif
 
-CXX 		:= $(CC)
-CXXFLAGS 	:= $(CFLAGS)
+CXX		:= $(CC)
+CXXFLAGS	:= $(CFLAGS)
 
-SRC_MODULES   	:= $(addprefix $(SRC_DIR)/,$(MODULES))
+SRC_MODULES	:= $(addprefix $(SRC_DIR)/,$(MODULES))
 SRC_BUILD_DIR 	:= $(addprefix $(BUILD_DIR)/$(SRC_DIR)/,$(MODULES))
-SRC       	:= $(foreach sdir,$(SRC_MODULES),$(wildcard $(sdir)/*.cpp))
-OBJ       	:= $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/$(SRC_DIR)/%.o,$(SRC))
+SRC		:= $(foreach sdir,$(SRC_MODULES),$(wildcard $(sdir)/*.cpp))
+OBJ		:= $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/$(SRC_DIR)/%.o,$(SRC))
 
-TEST_SRC_DIR		:= $(addprefix 	$(TEST_DIR)/,$(TEST_MODULES))
+TEST_SRC_DIR	:= $(addprefix 	$(TEST_DIR)/,$(TEST_MODULES))
 TEST_BUILD_DIR 	:= $(addprefix $(BUILD_DIR)/$(TEST_DIR)/,$(TEST_MODULES))
-TEST_SRC 	:= $(foreach tdir,$(TEST_SRC_DIR),$(wildcard $(tdir)/*.cpp))
-TEST_OBJ  	:= $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/$(TEST_DIR)/%.o,$(TEST_SRC))
+TEST_SRC	:= $(foreach tdir,$(TEST_SRC_DIR),$(wildcard $(tdir)/*.cpp))
+TEST_OBJ	:= $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/$(TEST_DIR)/%.o,$(TEST_SRC))
 TEST_TARGETS	:= $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%$(TARGET_EXT),$(TEST_SRC))
 # Objects with target excluded (workaround for multiple 'main' definition error)
 OBJ_TARGET_EXCL	:= $(filter-out $(BUILD_DIR)/$(SRC_DIR)/./$(TARGET).o,$(OBJ))
@@ -306,3 +306,4 @@ cleanest:
 	@rm -rf gmon.out
 
 .PHONY: clean-proj clean-out clean cleanest
+
